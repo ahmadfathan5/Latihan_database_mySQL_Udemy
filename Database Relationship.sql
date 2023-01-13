@@ -159,3 +159,113 @@ JOIN category c ON c.id = p.id_category;
 
 -- ===============================================================================
 -- MANY to MANY relationship
+CREATE TABLE orders(
+	id INT NOT NULL AUTO_INCREMENT,
+	total INT NOT NULL,
+	order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (id)
+) ENGINE = InnoDB;
+
+DESC order_detail;
+
+CREATE TABLE orders_detail(
+	id_product VARCHAR(10) NOT NULL,
+	id_order INT NOT NULL,
+	price INT NOT NULL,
+	quantity INT NOT NULL,
+	PRIMARY KEY (id_product, id_order)
+) ENGINE = InnoDB;
+
+ALTER TABLE orders_detail 
+ADD CONSTRAINT fk_order_detail_product
+FOREIGN KEY(id_product) REFERENCES products(id);
+
+ALTER TABLE orders_detail 
+ADD CONSTRAINT fk_order_detail_order
+FOREIGN KEY(id_order) REFERENCES orders(id);
+
+show CREATE table orders_detail ;
+
+desc orders_detail 
+
+INSERT INTO orders(total)
+VALUES (50000);
+
+INSERT INTO orders_detail(id_product, id_order, price, quantity)
+VALUES ('P0001', 1, 25000, 1),
+       ('P0002', 1, 25000, 1);
+
+INSERT INTO orders_detail(id_product, id_order, price, quantity)
+VALUES ('P0003', 2, 25000, 1),
+       ('P0004', 3, 25000, 1);
+
+INSERT INTO orders_detail(id_product, id_order, price, quantity)
+VALUES ('P0001', 2, 25000, 1),
+       ('P0003', 3, 25000, 1);
+
+SELECT * FROM orders ;
+SELECT * FROM orders_detail ;
+
+
+SELECT * FROM orders o 
+JOIN orders_detail o1 ON o1.id_order = o.id
+JOIN products p ON p.id = o1.id_product;
+
+SELECT o.id, p.id, p.name, o1.quantity, o1.price FROM orders o 
+JOIN orders_detail o1 ON o1.id_order = o.id
+JOIN products p ON p.id = o1.id_product;
+
+
+
+
+-- ======================================================
+-- Jenis Jenis JOIN
+select * from category ;
+select * from products p  ;
+
+insert into category(id, name)
+values ('C0004', 'Oleh-oleh'),
+('C0005', 'Gadeget');
+
+INSERT INTO products(id, name, price, quantity) 
+VALUES	('X0001', 'X1',  20000, 100),
+	  	('X0002', 'X2',  25000, 100),
+	 	('X0003', 'X3',  15000, 100);
+
+-- >> INNER JOIN 
+SELECT * FROM category c
+INNER JOIN products p ON p.id_category = c.id
+
+-- >> RIGHT JOIN
+SELECT * FROM category c
+RIGHT JOIN products p ON p.id_category = c.id
+
+-- >> LEFT JOIN
+SELECT * FROM category c
+LEFT JOIN products p ON p.id_category = c.id
+
+-- >> CROSS JOIN
+SELECT * FROM category c
+LEFT JOIN products p 
+
+CREATE TABLE numbers(
+id int NOT NULL,
+primary key (id)
+)engine = InnoDB;
+
+INSERT INTO numbers(id)
+values (1),
+       (2),
+       (3),
+       (4),
+       (5),
+       (6),
+       (7),
+       (8),
+       (9),
+       (10);
+      
+SELECT numbers1.id, numbers2.id, (numbers1.id * numbers2.id)
+FROM numbers as numbers1
+         CROSS JOIN numbers as numbers2
+ORDER BY numbers1.id, numbers2.id;
