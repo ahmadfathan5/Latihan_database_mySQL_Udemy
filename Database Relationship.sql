@@ -269,3 +269,152 @@ SELECT numbers1.id, numbers2.id, (numbers1.id * numbers2.id)
 FROM numbers as numbers1
          CROSS JOIN numbers as numbers2
 ORDER BY numbers1.id, numbers2.id;
+
+
+-- ==========================================================================
+-- SUB QUERY
+-- menambahakan query lain ke dalam suatu query untuk mendapat hasil yang diinginkan
+
+
+-- SUB QUERY DI WHERE
+SELECT * FROM products p
+WHERE price > (SELECT AVG(price) FROM products p2 )
+
+
+-- sub query di from
+update products set price = 1000000 where id ='X0003';
+
+SELECT MAX(price) from products p ;
+ 
+SELECT MAX(price) 
+FROM (
+	select price from category c join products p on p.id_category = c.id
+) as cp;
+
+
+
+
+-- ======================================================================
+-- set operator
+
+-- jenis operator SET 
+-- >> UNION 
+-- >> UNION ALL 
+-- >> INTERSECT 
+-- >> MINUS
+
+
+-- membuat table baru guest book
+
+CREATE TABLE guestbooks(
+	id INT NOT NULL AUTO_INCREMENT,
+	email VARCHAR(100) NOT NULL,
+	title VARCHAR(200) NOT NULL,
+	content TEXT,
+	PRIMARY KEY (id)
+) ENGINE = InnoDB;
+
+INSERT INTO guestbooks(email, title, content)
+VALUES ('guest@gmail.com', 'Hello', 'Hello'),
+       ('guest2@gmail.com', 'Hello', 'Hello'),
+       ('guest3@gmail.com', 'Hello', 'Hello'),
+       ('eko@gmail.com', 'Hello', 'Hello'),
+       ('eko@gmail.com', 'Hello', 'Hello'),
+('eko@gmail.com', 'Hello', 'Hello');
+
+
+SELECT * FROM guestbooks ;
+
+-- union : DUPLIKAT TIDAK AKAN DITAMPILKAN
+SELECT DISTINCT email FROM customer c 
+UNION
+SELECT DISTINCT email FROM guestbooks ;
+
+SELECT  email FROM customer c 
+UNION 
+SELECT  email FROM guestbooks ;
+
+-- union ALL : DUPLIKAT JUGA DITAMPILKAN
+SELECT DISTINCT email FROM customer c 
+UNION ALL
+SELECT DISTINCT email FROM guestbooks ;
+
+SELECT emails.email, COUNT(emails.email) FROM
+(SELECT  email FROM customer c 
+UNION ALL
+SELECT  email FROM guestbooks) as emails 
+GROUP BY emails.email;
+
+
+-- intersect : hanya menampilakan data yang beririsan
+-- inner join ternyata juga secara otomatis melakukan intersect tetaoi ditambahkan distinct
+SELECT DISTINCT email
+FROM customers
+WHERE email IN (SELECT DISTINCT email FROM guestbooks);
+
+SELECT DISTINCT customers.email
+FROM customers
+INNER JOIN guestbooks ON (guestbooks.email = customers.email);
+
+
+-- minus : data yang sama antara query pertama dan kedua maka data tersebut akan dihapus, dan hanya menampilakn data dari query pertama
+-- left join menghasilakn minus tetapi ditambahkan kondisi where is null
+SELECT DISTINCT customer.email, guestbooks.email
+FROM customer
+         LEFT JOIN guestbooks ON (customer.email = guestbooks.email)
+WHERE guestbooks.email IS NULL;
+
+
+
+-- TRANSACTION
+-- hanya bisa menggunakan perintah di DML
+
+START TRANSACTION;
+
+INSERT INTO guestbooks (email, title, content)
+VALUES ('contoh@gmail.com', 'Contoh', 'Contoh'),
+       ('contoh2@gmail.com', 'Contoh', 'Contoh'),
+       ('contoh3@gmail.com', 'Contoh', 'Contoh');
+
+SELECT *
+FROM guestbooks;
+
+COMMIT;
+
+START TRANSACTION;
+
+DELETE
+FROM guestbooks;
+
+SELECT *
+FROM guestbooks;
+
+ROLLBACK;
+
+
+
+-- ===================================================================================
+-- locking
+-- LOCKING OTOMATIS MENGGUNKANA TRANSACTION
+
+-- LOCKING MANUAL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
