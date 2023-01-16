@@ -8,10 +8,13 @@ WHERE id = 9;
 
 COMMIT ;
 
+-- LOCKING MANUAL
+
 START TRANSACTION ;
 
 SELECT * FROm products;
 
+-- - TAMBAHKAN FOR BLABLA UNTUK LOCK
 SELECT * FROM products WHERE id = 'P0001' FOR UPDATE ;
 
 UPDATE products
@@ -44,3 +47,11 @@ SELECT * FROM products;
 
 ALTER TABLE products
 ADD column sample VARCHAR(100);
+
+
+
+
+
+
+
+
